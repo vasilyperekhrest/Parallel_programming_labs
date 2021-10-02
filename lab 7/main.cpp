@@ -16,15 +16,10 @@ int main() {
     l7::Database db;
     std::mutex mutex;
 
-    auto thread_output = std::thread(ThreadTransactionOutput, std::ref(db), std::ref(mutex));
-    auto thread_add = std::thread(ThreadAddTransactions, std::ref(db));
-    auto thread_minmax = std::thread(ThreadMinMaxTransactions, std::ref(db), std::ref(mutex));
-    auto thread_delete = std::thread(ThreadDeleteTransactions, std::ref(db), 12, 6);
-
-    thread_output.detach();
-    thread_add.detach();
-    thread_minmax.detach();
-    thread_delete.detach();
+    std::thread(ThreadTransactionOutput, std::ref(db), std::ref(mutex)).detach();
+    std::thread(ThreadAddTransactions, std::ref(db)).detach();
+    std::thread(ThreadMinMaxTransactions, std::ref(db), std::ref(mutex)).detach();
+    std::thread(ThreadDeleteTransactions, std::ref(db), 12, 9).detach();
 
     std::this_thread::sleep_for(std::chrono::hours(1));
     return 0;
