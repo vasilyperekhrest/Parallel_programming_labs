@@ -5,7 +5,7 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
-#include <mutex>
+#include <shared_mutex>
 
 
 namespace l7 {
@@ -15,7 +15,7 @@ namespace l7 {
         std::vector<int32_t> transactions;
         int32_t balance;
 
-        std::mutex mutex;
+        std::shared_mutex mutex;
 
     public:
         Database();

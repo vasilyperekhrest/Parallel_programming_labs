@@ -10,7 +10,7 @@ l7::Database::Database() {
 
 
 void l7::Database::add_transaction(int32_t _transact) {
-    std::lock_guard<std::mutex> lg(this->mutex);
+    std::lock_guard<std::shared_mutex> lg(this->mutex);
 
     if (this->balance + _transact < 0) {
         return;
@@ -18,11 +18,10 @@ void l7::Database::add_transaction(int32_t _transact) {
 
     this->transactions.push_back(_transact);
     this->balance += _transact;
-
 }
 
 std::ostream &l7::operator<<(std::ostream &out, l7::Database &db) {
-    std::lock_guard<std::mutex> lg(db.mutex);
+    std::shared_lock<std::shared_mutex> sh_lock(db.mutex);
     uint32_t max_indent = std::to_string(db.transactions.size()).size() + 2;
 
     out << "id" << std::string(max_indent - 2, ' ') << "transaction\n";
@@ -37,7 +36,7 @@ std::ostream &l7::operator<<(std::ostream &out, l7::Database &db) {
 }
 
 std::tuple<int32_t , int32_t> l7::Database::get_minmax_transactions() {
-    std::lock_guard<std::mutex> lg(this->mutex);
+    std::shared_lock<std::shared_mutex> sh_lock(this->mutex);
 
     if (this->transactions.empty()) {
         return std::make_tuple(0, 0);
@@ -48,12 +47,12 @@ std::tuple<int32_t , int32_t> l7::Database::get_minmax_transactions() {
 }
 
 uint32_t l7::Database::get_transactions_size() {
-    std::lock_guard<std::mutex> lg(this->mutex);
+    std::shared_lock<std::shared_mutex> sh_lock(this->mutex);
     return this->transactions.size();
 }
 
 void l7::Database::delete_range_transactions(uint32_t begin, uint32_t end) {
-    std::lock_guard<std::mutex> lg(this->mutex);
+    std::lock_guard<std::shared_mutex> lg(this->mutex);
 
     if (begin > end or end >= this->transactions.size()) {
         return;

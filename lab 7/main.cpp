@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <random>
+#include <shared_mutex>
 
 #include "database.h"
 
@@ -52,9 +53,10 @@ void ThreadTransactionOutput(l7::Database &db, std::mutex &mutex) {
 void ThreadMinMaxTransactions(l7::Database &db, std::mutex &mutex) {
     while (true) {
         std::this_thread::sleep_for(std::chrono::seconds(2));
+        auto [min, max] = db.get_minmax_transactions();
+
         {
             std::lock_guard<std::mutex> lg(mutex);
-            auto [min, max] = db.get_minmax_transactions();
             std::cout << "Minimum transaction: " << min << std::endl <<
                          "Maximum transaction: " << max << std::endl << std::endl;
         }
