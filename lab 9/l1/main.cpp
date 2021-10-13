@@ -20,6 +20,12 @@ void ThreadRunProcessGCD(std::list<std::tuple<int32_t, int32_t, int32_t>> &conta
 
 
 int main() {
+    bp::child compile_proc(bp::search_path("clang++"),
+                           std::vector<std::string>{"modules/array_gcd.cpp", "-omodules/array_gcd", "-std=c++20"},
+                           bp::std_out > stdout, bp::std_err > stderr);
+    compile_proc.wait();
+
+
     std::list<std::tuple<int32_t, int32_t, int32_t>> container;
     std::mutex mutex;
     std::vector<std::thread> threads_proc_id;
@@ -74,7 +80,7 @@ void ThreadRunProcessGCD(std::list<std::tuple<int32_t, int32_t, int32_t>> &conta
     bp::ipstream istream;
     bp::opstream ostream;
 
-    bp::child proc_gcd("../../l1/modules/bin/array_gcd", bp::std_out > istream, bp::std_in < ostream);
+    bp::child proc_gcd("modules/array_gcd", bp::std_out > istream, bp::std_in < ostream);
 
     // sent size
     ostream << end_id - begin_id << std::endl;
@@ -112,7 +118,7 @@ void ThreadRunProcessGCD(std::list<std::tuple<int32_t, int32_t, int32_t>> &conta
         } catch (std::exception &e) {
             std::cout << "Conversion error" << std::endl;
             proc_gcd.terminate();
-            exit(1);
+            return;
         }
 
         {
