@@ -11,5 +11,5 @@ find_package(Boost 1.50 REQUIRED COMPONENTS filesystem)
 include_directories (${Boost_INCLUDE_DIR})
 
 add_subdirectory(l1)
-add_subdirectory(lab\ 2)
+add_subdirectory(l2)
 add_subdirectory(lab\ 8)
